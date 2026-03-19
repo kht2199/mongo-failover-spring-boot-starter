@@ -19,6 +19,14 @@ Spring Boot Starter for multiple MongoDB connections with sticky failover.
 - Java 21+
 - Spring Boot 3.x
 
+## Compatibility
+
+| Library Version | Spring Boot | Java |
+|---|---|---|
+| 1.x | 3.0 ~ 3.x | 21+ |
+
+Spring Boot 2.x is not supported (requires `@AutoConfiguration` and `MongoDatabaseFactory` introduced in Spring Boot 3.0).
+
 ## Installation
 
 ### Gradle

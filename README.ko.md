@@ -19,6 +19,14 @@
 - Java 21+
 - Spring Boot 3.x
 
+## 호환성
+
+| 라이브러리 버전 | Spring Boot | Java |
+|---|---|---|
+| 1.x | 3.0 ~ 3.x | 21+ |
+
+Spring Boot 2.x는 지원하지 않습니다 (Spring Boot 3.0에서 도입된 `@AutoConfiguration`과 `MongoDatabaseFactory`를 사용합니다).
+
 ## 설치
 
 ### Gradle
