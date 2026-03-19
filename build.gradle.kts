@@ -1,11 +1,10 @@
 plugins {
     `java-library`
-    id("io.spring.dependency-management") version "1.1.7"
     id("com.vanniktech.maven.publish") version "0.30.0"
 }
 
 group = "io.github.kht2199"
-version = "1.0.0"
+version = "1.1.0"
 
 java {
     toolchain {
@@ -23,46 +22,35 @@ repositories {
     mavenCentral()
 }
 
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:3.5.10")
-    }
-}
-
 dependencies {
-    implementation("org.springframework.boot:spring-boot-autoconfigure")
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
-    implementation("org.hibernate.validator:hibernate-validator")
+    // BOM - compile/annotation 시에만 사용, 출판된 POM에 버전이 박히지 않음
+    compileOnly(platform("org.springframework.boot:spring-boot-dependencies:3.5.10"))
+    annotationProcessor(platform("org.springframework.boot:spring-boot-dependencies:3.5.10"))
+    testImplementation(platform("org.springframework.boot:spring-boot-dependencies:3.5.10"))
 
-    compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
+    // Spring Boot 의존성 - 항상 사용자 프로젝트에서 제공됨
+    compileOnly("org.springframework.boot:spring-boot-autoconfigure")
+    compileOnly("org.springframework.boot:spring-boot-starter-data-mongodb")
 
+    // 런타임에 필요 - 사용자 POM에 명시적으로 포함
+    implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
+
+    compileOnly("org.projectlombok:lombok:1.18.38")
+    annotationProcessor("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     testImplementation("org.testcontainers:mongodb:1.20.4")
     testImplementation("org.testcontainers:junit-jupiter:1.20.4")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    testCompileOnly("org.projectlombok:lombok")
-    testAnnotationProcessor("org.projectlombok:lombok")
+    testCompileOnly("org.projectlombok:lombok:1.18.38")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            withType<MavenPublication> {
-                versionMapping {
-                    usage("java-api") { fromResolutionOf("runtimeClasspath") }
-                    usage("java-runtime") { fromResolutionResult() }
-                }
-            }
-        }
-    }
 }
 
 mavenPublishing {
