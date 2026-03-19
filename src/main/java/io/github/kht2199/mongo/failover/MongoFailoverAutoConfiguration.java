@@ -1,6 +1,12 @@
 package io.github.kht2199.mongo.failover;
 
 import com.mongodb.client.MongoClient;
+import io.github.kht2199.mongo.failover.config.MongoProperties;
+import io.github.kht2199.mongo.failover.core.MongoClientRegistry;
+import io.github.kht2199.mongo.failover.core.MongoHealthChecker;
+import io.github.kht2199.mongo.failover.core.MongoHealthStatus;
+import io.github.kht2199.mongo.failover.core.MongoRouter;
+import io.github.kht2199.mongo.failover.core.MongoRouterMongoDatabaseFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

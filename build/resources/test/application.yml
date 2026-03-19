@@ -1,0 +1,2 @@
+mongodb:
+  health-check-interval-ms: 600000

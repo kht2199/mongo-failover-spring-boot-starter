@@ -1,0 +1,43 @@
+{
+  "groups": [
+    {
+      "name": "mongodb",
+      "type": "io.github.kht2199.mongo.failover.MongoProperties",
+      "sourceType": "io.github.kht2199.mongo.failover.MongoProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "mongodb.connect-timeout-ms",
+      "type": "java.lang.Integer",
+      "sourceType": "io.github.kht2199.mongo.failover.MongoProperties",
+      "defaultValue": 3000
+    },
+    {
+      "name": "mongodb.database",
+      "type": "java.lang.String",
+      "sourceType": "io.github.kht2199.mongo.failover.MongoProperties"
+    },
+    {
+      "name": "mongodb.health-check-interval-ms",
+      "type": "java.lang.Integer",
+      "sourceType": "io.github.kht2199.mongo.failover.MongoProperties",
+      "defaultValue": 10000
+    },
+    {
+      "name": "mongodb.instances",
+      "type": "java.util.List<io.github.kht2199.mongo.failover.MongoInstanceConfig>",
+      "sourceType": "io.github.kht2199.mongo.failover.MongoProperties"
+    },
+    {
+      "name": "mongodb.server-selection-timeout-ms",
+      "type": "java.lang.Integer",
+      "sourceType": "io.github.kht2199.mongo.failover.MongoProperties",
+      "defaultValue": 3000
+    }
+  ],
+  "hints": [],
+  "ignored": {
+    "properties": []
+  }
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.kht2199.mongo.failover.core.MongoHealthCheckerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-03-19T09:22:17" hostname="gimhuitaeg-ui-Mac-Studio.local" time="0.241">
+  <properties/>
+  <testcase name="triggersFailoverWhenActiveInstanceFails()" classname="io.github.kht2199.mongo.failover.core.MongoHealthCheckerTest" time="0.234"/>
+  <testcase name="doesNotTriggerFailoverWhenNonActiveInstanceFails()" classname="io.github.kht2199.mongo.failover.core.MongoHealthCheckerTest" time="0.003"/>
+  <testcase name="marksInstanceUnhealthyWhenPingFails()" classname="io.github.kht2199.mongo.failover.core.MongoHealthCheckerTest" time="0.002"/>
+  <system-out><![CDATA[2026-03-19T18:22:18.210+09:00  WARN 96508 --- [    Test worker] i.g.k.m.f.core.MongoHealthChecker        : MongoDB instance [primary] became unhealthy
+2026-03-19T18:22:18.217+09:00  WARN 96508 --- [    Test worker] i.g.k.m.f.core.MongoHealthChecker        : MongoDB instance [secondary] became unhealthy
+2026-03-19T18:22:18.220+09:00  WARN 96508 --- [    Test worker] i.g.k.m.f.core.MongoHealthChecker        : MongoDB instance [primary] became unhealthy
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
