@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.kht2199"
-version = "1.0.0"
+version = "1.0.0-SNAPSHOT"
 
 java {
     toolchain {
@@ -95,7 +95,12 @@ publishing {
     repositories {
         maven {
             name = "central"
-            url = uri("https://central.sonatype.com/api/v1/publisher/upload")
+            val isSnapshot = version.toString().endsWith("-SNAPSHOT")
+            url = if (isSnapshot) {
+                uri("https://central.sonatype.com/repository/maven-snapshots/")
+            } else {
+                uri("https://central.sonatype.com/api/v1/publisher/upload")
+            }
             credentials {
                 username = providers.gradleProperty("sonatype.username").orNull
                     ?: System.getenv("SONATYPE_USERNAME")
