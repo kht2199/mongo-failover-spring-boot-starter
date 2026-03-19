@@ -26,6 +26,9 @@ public class MongoHealthChecker {
 
     @Scheduled(fixedDelayString = "${mongodb.health-check-interval-ms:10000}")
     public void checkHealth() {
+        // Snapshot active index before the loop. If failover advances the index mid-loop,
+        // we intentionally do not chain a second failover in the same cycle.
+        // The next scheduled check will handle any further failures.
         int activeIndex = router.getCurrentIndex();
         for (int i = 0; i < registry.size(); i++) {
             boolean healthy = ping(i);

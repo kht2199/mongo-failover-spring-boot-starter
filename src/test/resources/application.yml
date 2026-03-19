@@ -1,4 +1,2 @@
-spring:
-  task:
-    scheduling:
-      enabled: false
+mongodb:
+  health-check-interval-ms: 600000
