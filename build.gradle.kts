@@ -1,8 +1,7 @@
 plugins {
     `java-library`
-    `maven-publish`
-    signing
     id("io.spring.dependency-management") version "1.1.7"
+    id("com.vanniktech.maven.publish") version "0.30.0"
 }
 
 group = "io.github.kht2199"
@@ -12,8 +11,6 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
-    withSourcesJar()
-    withJavadocJar()
 }
 
 configurations {
@@ -55,69 +52,33 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
-            versionMapping {
-                usage("java-api") {
-                    fromResolutionOf("runtimeClasspath")
-                }
-                usage("java-runtime") {
-                    fromResolutionResult()
-                }
-            }
-            pom {
-                name = "mongo-failover-spring-boot-starter"
-                description = "Spring Boot Starter for multiple MongoDB connections with sticky failover"
-                url = "https://github.com/kht2199/mongo-failover-spring-boot-starter"
-                licenses {
-                    license {
-                        name = "Apache-2.0"
-                        url = "https://www.apache.org/licenses/LICENSE-2.0"
-                    }
-                }
-                developers {
-                    developer {
-                        id = "kht2199"
-                        name = "Taek Kim"
-                        email = "kht2199@gmail.com"
-                    }
-                }
-                scm {
-                    url = "https://github.com/kht2199/mongo-failover-spring-boot-starter"
-                    connection = "scm:git:git://github.com/kht2199/mongo-failover-spring-boot-starter.git"
-                    developerConnection = "scm:git:ssh://github.com/kht2199/mongo-failover-spring-boot-starter.git"
-                }
-            }
-        }
-    }
-    repositories {
-        maven {
-            name = "central"
-            val isSnapshot = version.toString().endsWith("-SNAPSHOT")
-            url = if (isSnapshot) {
-                uri("https://central.sonatype.com/repository/maven-snapshots/")
-            } else {
-                uri("https://central.sonatype.com/api/v1/publisher/upload")
-            }
-            credentials {
-                username = providers.gradleProperty("sonatype.username").orNull
-                    ?: System.getenv("SONATYPE_USERNAME")
-                password = providers.gradleProperty("sonatype.password").orNull
-                    ?: System.getenv("SONATYPE_PASSWORD")
-            }
-        }
-    }
-}
+mavenPublishing {
+    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
 
-signing {
-    val signingKey = providers.gradleProperty("signing.key").orNull
-        ?: System.getenv("SIGNING_KEY")
-    val signingPassword = providers.gradleProperty("signing.password").orNull
-        ?: System.getenv("SIGNING_PASSWORD")
-    if (signingKey != null && signingPassword != null) {
-        useInMemoryPgpKeys(signingKey, signingPassword)
-        sign(publishing.publications["mavenJava"])
+    coordinates("io.github.kht2199", "mongo-failover-spring-boot-starter", version.toString())
+
+    pom {
+        name = "mongo-failover-spring-boot-starter"
+        description = "Spring Boot Starter for multiple MongoDB connections with sticky failover"
+        url = "https://github.com/kht2199/mongo-failover-spring-boot-starter"
+        licenses {
+            license {
+                name = "Apache-2.0"
+                url = "https://www.apache.org/licenses/LICENSE-2.0"
+            }
+        }
+        developers {
+            developer {
+                id = "kht2199"
+                name = "Taek Kim"
+                email = "kht2199@gmail.com"
+            }
+        }
+        scm {
+            url = "https://github.com/kht2199/mongo-failover-spring-boot-starter"
+            connection = "scm:git:git://github.com/kht2199/mongo-failover-spring-boot-starter.git"
+            developerConnection = "scm:git:ssh://github.com/kht2199/mongo-failover-spring-boot-starter.git"
+        }
     }
 }
