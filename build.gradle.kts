@@ -35,6 +35,7 @@ dependencyManagement {
 dependencies {
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    implementation("jakarta.validation:jakarta.validation-api")
 
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
