@@ -52,6 +52,19 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+afterEvaluate {
+    publishing {
+        publications {
+            withType<MavenPublication> {
+                versionMapping {
+                    usage("java-api") { fromResolutionOf("runtimeClasspath") }
+                    usage("java-runtime") { fromResolutionResult() }
+                }
+            }
+        }
+    }
+}
+
 mavenPublishing {
     publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
