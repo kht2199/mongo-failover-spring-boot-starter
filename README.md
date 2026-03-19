@@ -1,6 +1,6 @@
 # mongo-failover-spring-boot-starter
 
-[![](https://jitpack.io/v/kht2199/mongo-failover-spring-boot-starter.svg)](https://jitpack.io/#kht2199/mongo-failover-spring-boot-starter)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.kht2199/mongo-failover-spring-boot-starter)](https://central.sonatype.com/artifact/io.github.kht2199/mongo-failover-spring-boot-starter)
 
 Spring Boot Starter for multiple MongoDB connections with sticky failover.
 
@@ -21,35 +21,28 @@ Spring Boot Starter for multiple MongoDB connections with sticky failover.
 
 ## Installation
 
-### Maven Central (Snapshot)
-
-```xml
-<repositories>
-  <repository>
-    <id>sonatype-snapshots</id>
-    <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-  </repository>
-</repositories>
-
-<dependency>
-  <groupId>io.github.kht2199</groupId>
-  <artifactId>mongo-failover-spring-boot-starter</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
-</dependency>
-```
-
 ### Gradle
 
 ```kotlin
-repositories {
-    mavenCentral()
-    maven { url = uri("https://central.sonatype.com/repository/maven-snapshots/") }
-}
-
 dependencies {
-    implementation("io.github.kht2199:mongo-failover-spring-boot-starter:1.0.0-SNAPSHOT")
+    implementation("io.github.kht2199:mongo-failover-spring-boot-starter:1.1.0")
     implementation("org.mongodb:mongodb-driver-sync:5.5.2")
 }
+```
+
+### Maven
+
+```xml
+<dependency>
+  <groupId>io.github.kht2199</groupId>
+  <artifactId>mongo-failover-spring-boot-starter</artifactId>
+  <version>1.1.0</version>
+</dependency>
+<dependency>
+  <groupId>org.mongodb</groupId>
+  <artifactId>mongodb-driver-sync</artifactId>
+  <version>5.5.2</version>
+</dependency>
 ```
 
 ## Configuration
@@ -141,10 +134,20 @@ Primary ──○                   Secondary ──● (active, after failover)
 | `mongodb.instances` | — | List of MongoDB instances (required, min 1) |
 | `mongodb.instances[].name` | — | Instance name for logging |
 | `mongodb.instances[].uri` | — | MongoDB connection URI |
-| `mongodb.connect-timeout-ms` | `3000` | Connection timeout |
-| `mongodb.server-selection-timeout-ms` | `3000` | Server selection timeout |
-| `mongodb.health-check-interval-ms` | `10000` | Health check interval |
+| `mongodb.connect-timeout-ms` | `3000` | Connection timeout (ms) |
+| `mongodb.server-selection-timeout-ms` | `3000` | Server selection timeout (ms) |
+| `mongodb.health-check-interval-ms` | `10000` | Health check interval (ms) |
 | `mongodb.failover.scheduling.enabled` | `true` | Enable/disable automatic health checking |
+
+## Startup Validation
+
+If mandatory configuration is missing, the application will **fail at startup** with a clear error:
+
+```
+Binding validation errors on mongodb
+ - Field error on field 'database': must not be blank
+ - Field error on field 'instances': must not be empty
+```
 
 ## Disabling the Scheduler
 

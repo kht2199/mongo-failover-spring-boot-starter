@@ -1,6 +1,6 @@
 # mongo-failover-spring-boot-starter
 
-[![](https://jitpack.io/v/kht2199/mongo-failover-spring-boot-starter.svg)](https://jitpack.io/#kht2199/mongo-failover-spring-boot-starter)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.kht2199/mongo-failover-spring-boot-starter)](https://central.sonatype.com/artifact/io.github.kht2199/mongo-failover-spring-boot-starter)
 
 다중 MongoDB 연결과 스티키 페일오버를 지원하는 Spring Boot Starter입니다.
 
@@ -21,35 +21,28 @@
 
 ## 설치
 
-### Maven Central (Snapshot)
-
-```xml
-<repositories>
-  <repository>
-    <id>sonatype-snapshots</id>
-    <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-  </repository>
-</repositories>
-
-<dependency>
-  <groupId>io.github.kht2199</groupId>
-  <artifactId>mongo-failover-spring-boot-starter</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
-</dependency>
-```
-
 ### Gradle
 
 ```kotlin
-repositories {
-    mavenCentral()
-    maven { url = uri("https://central.sonatype.com/repository/maven-snapshots/") }
-}
-
 dependencies {
-    implementation("io.github.kht2199:mongo-failover-spring-boot-starter:1.0.0-SNAPSHOT")
+    implementation("io.github.kht2199:mongo-failover-spring-boot-starter:1.1.0")
     implementation("org.mongodb:mongodb-driver-sync:5.5.2")
 }
+```
+
+### Maven
+
+```xml
+<dependency>
+  <groupId>io.github.kht2199</groupId>
+  <artifactId>mongo-failover-spring-boot-starter</artifactId>
+  <version>1.1.0</version>
+</dependency>
+<dependency>
+  <groupId>org.mongodb</groupId>
+  <artifactId>mongodb-driver-sync</artifactId>
+  <version>5.5.2</version>
+</dependency>
 ```
 
 ## 설정
@@ -145,6 +138,16 @@ Primary ──○                   Secondary ──● (페일오버 후 활성
 | `mongodb.server-selection-timeout-ms` | `3000` | 서버 선택 타임아웃 (ms) |
 | `mongodb.health-check-interval-ms` | `10000` | 헬스체크 주기 (ms) |
 | `mongodb.failover.scheduling.enabled` | `true` | 자동 헬스체크 활성화 여부 |
+
+## 시작 시 유효성 검사
+
+필수 설정이 없으면 **애플리케이션 시작 시 즉시 실패**합니다:
+
+```
+Binding validation errors on mongodb
+ - Field error on field 'database': must not be blank
+ - Field error on field 'instances': must not be empty
+```
 
 ## 스케줄러 비활성화
 
