@@ -3,8 +3,6 @@ package io.github.kht2199.mongo.failover;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
@@ -14,7 +12,7 @@ class MongoRouterTest {
 
     private MongoClientRegistry registry;
     private MongoProperties properties;
-    private AtomicBoolean[] healthStatus;
+    private MongoHealthStatus healthStatus;
     private MongoRouter router;
 
     @BeforeEach
@@ -25,11 +23,7 @@ class MongoRouterTest {
         properties = new MongoProperties();
         properties.setDatabase("testdb");
 
-        healthStatus = new AtomicBoolean[]{
-            new AtomicBoolean(true),
-            new AtomicBoolean(true),
-            new AtomicBoolean(true)
-        };
+        healthStatus = new MongoHealthStatus(3);
         router = new MongoRouter(registry, properties, healthStatus);
     }
 
@@ -46,23 +40,23 @@ class MongoRouterTest {
 
     @Test
     void failoverSkipsUnhealthyInstances() {
-        healthStatus[1].set(false);
+        healthStatus.get(1).set(false);
         router.failover(0);
         assertThat(router.getCurrentIndex()).isEqualTo(2);
     }
 
     @Test
-    void failoverIsIdempotentWhenCalledConcurrently() {
-        router.failover(0);
-        router.failover(0);
+    void failoverIsNoOpWhenAlreadyAdvanced() {
+        router.failover(0); // advances to 1
+        router.failover(0); // stale call — currentIndex != failingIndex, returns immediately
         assertThat(router.getCurrentIndex()).isEqualTo(1);
     }
 
     @Test
     void throwsWhenAllInstancesUnhealthy() {
-        healthStatus[0].set(false);
-        healthStatus[1].set(false);
-        healthStatus[2].set(false);
+        healthStatus.get(0).set(false);
+        healthStatus.get(1).set(false);
+        healthStatus.get(2).set(false);
         assertThatThrownBy(() -> router.failover(0))
             .isInstanceOf(MongoUnavailableException.class)
             .hasMessageContaining("unavailable");

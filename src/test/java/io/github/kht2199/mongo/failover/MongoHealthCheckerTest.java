@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,7 +17,7 @@ class MongoHealthCheckerTest {
     private MongoClientRegistry registry;
     private MongoRouter router;
     private MongoProperties properties;
-    private AtomicBoolean[] healthStatus;
+    private MongoHealthStatus healthStatus;
     private MongoHealthChecker checker;
 
     @BeforeEach
@@ -35,7 +34,7 @@ class MongoHealthCheckerTest {
         router = mock(MongoRouter.class);
         when(router.getCurrentIndex()).thenReturn(0);
 
-        healthStatus = new AtomicBoolean[]{new AtomicBoolean(true), new AtomicBoolean(true)};
+        healthStatus = new MongoHealthStatus(2);
         checker = new MongoHealthChecker(registry, router, properties, healthStatus);
     }
 
@@ -54,8 +53,8 @@ class MongoHealthCheckerTest {
 
         checker.checkHealth();
 
-        assertThat(healthStatus[0].get()).isFalse();
-        assertThat(healthStatus[1].get()).isTrue();
+        assertThat(healthStatus.get(0).get()).isFalse();
+        assertThat(healthStatus.get(1).get()).isTrue();
     }
 
     @Test

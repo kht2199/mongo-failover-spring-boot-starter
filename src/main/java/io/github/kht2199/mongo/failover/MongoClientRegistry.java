@@ -48,6 +48,9 @@ public class MongoClientRegistry implements DisposableBean {
     }
 
     public int size() {
+        if (clients == null) {
+            throw new IllegalStateException("MongoClientRegistry is not initialized. init() must be called before use.");
+        }
         return clients.size();
     }
 

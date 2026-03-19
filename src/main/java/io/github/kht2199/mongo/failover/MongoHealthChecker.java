@@ -4,20 +4,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 @Slf4j
 public class MongoHealthChecker {
 
     private final MongoClientRegistry registry;
     private final MongoRouter router;
     private final MongoProperties properties;
-    private final AtomicBoolean[] healthStatus;
+    private final MongoHealthStatus healthStatus;
 
     public MongoHealthChecker(MongoClientRegistry registry,
                                MongoRouter router,
                                MongoProperties properties,
-                               AtomicBoolean[] healthStatus) {
+                               MongoHealthStatus healthStatus) {
         this.registry = registry;
         this.router = router;
         this.properties = properties;
@@ -32,7 +30,7 @@ public class MongoHealthChecker {
         int activeIndex = router.getCurrentIndex();
         for (int i = 0; i < registry.size(); i++) {
             boolean healthy = ping(i);
-            boolean wasHealthy = healthStatus[i].getAndSet(healthy);
+            boolean wasHealthy = healthStatus.get(i).getAndSet(healthy);
             if (!healthy && wasHealthy) {
                 log.warn("MongoDB instance [{}] became unhealthy", instanceName(i));
             } else if (healthy && !wasHealthy) {

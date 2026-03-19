@@ -4,18 +4,17 @@ import com.mongodb.client.MongoClient;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 @AutoConfiguration
 @ConditionalOnClass(MongoClient.class)
 @EnableConfigurationProperties(MongoProperties.class)
-@EnableScheduling
 public class MongoFailoverAutoConfiguration {
 
     @Bean
@@ -26,18 +25,15 @@ public class MongoFailoverAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public AtomicBoolean[] mongoHealthStatus(MongoProperties properties) {
-        int size = properties.getInstances().size();
-        AtomicBoolean[] status = new AtomicBoolean[size];
-        for (int i = 0; i < size; i++) status[i] = new AtomicBoolean(true);
-        return status;
+    public MongoHealthStatus mongoHealthStatus(MongoProperties properties) {
+        return new MongoHealthStatus(properties.getInstances().size());
     }
 
     @Bean
     @ConditionalOnMissingBean
     public MongoRouter mongoRouter(MongoClientRegistry registry,
                                    MongoProperties properties,
-                                   AtomicBoolean[] mongoHealthStatus) {
+                                   MongoHealthStatus mongoHealthStatus) {
         return new MongoRouter(registry, properties, mongoHealthStatus);
     }
 
@@ -58,7 +54,13 @@ public class MongoFailoverAutoConfiguration {
     public MongoHealthChecker mongoHealthChecker(MongoClientRegistry registry,
                                                   MongoRouter router,
                                                   MongoProperties properties,
-                                                  AtomicBoolean[] mongoHealthStatus) {
+                                                  MongoHealthStatus mongoHealthStatus) {
         return new MongoHealthChecker(registry, router, properties, mongoHealthStatus);
+    }
+
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnProperty(name = "mongodb.failover.scheduling.enabled", matchIfMissing = true)
+    @EnableScheduling
+    static class MongoFailoverSchedulingConfiguration {
     }
 }

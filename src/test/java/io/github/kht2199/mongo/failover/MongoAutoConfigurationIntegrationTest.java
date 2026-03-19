@@ -45,6 +45,9 @@ class MongoAutoConfigurationIntegrationTest {
     @Autowired
     MongoDatabaseFactory mongoDatabaseFactory;
 
+    @Autowired
+    MongoHealthStatus mongoHealthStatus;
+
     @Test
     void autoConfigurationRegistersAllBeans() {
         assertThat(mongoRouter).isNotNull();
@@ -70,12 +73,22 @@ class MongoAutoConfigurationIntegrationTest {
 
     @Test
     void failoverSwitchesToSecondaryWhenPrimaryMarkedDown() {
-        // Directly call failover to test routing behavior
-        // (In production, MongoHealthChecker triggers this automatically)
         assertThat(mongoRouter.getCurrentIndex()).isEqualTo(0);
-        // We can't easily simulate a container failure without stopping the container,
-        // so we verify the router's initial state and that it can route to primary
-        Document result = mongoTemplate.getDb().runCommand(new Document("ping", 1));
-        assertThat(result).isNotNull();
+
+        // Simulate primary becoming unhealthy
+        mongoHealthStatus.get(0).set(false);
+        mongoRouter.failover(0);
+
+        assertThat(mongoRouter.getCurrentIndex()).isEqualTo(1);
+
+        // Verify we can still insert via secondary
+        Document doc = new Document("failover_test", true);
+        mongoTemplate.getDb().getCollection("failover").drop();
+        mongoTemplate.getDb().getCollection("failover").insertOne(doc);
+        assertThat(mongoTemplate.getDb().getCollection("failover").countDocuments()).isEqualTo(1);
+
+        // Restore health status
+        mongoHealthStatus.get(0).set(true);
+        mongoRouter.failover(1); // reset back if needed — or just leave as secondary for test isolation
     }
 }

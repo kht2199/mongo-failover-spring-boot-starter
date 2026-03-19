@@ -38,7 +38,9 @@ public class MongoRouterMongoDatabaseFactory implements MongoDatabaseFactory {
 
     @Override
     public MongoDatabaseFactory withSession(ClientSession session) {
-        return this;
+        throw new UnsupportedOperationException(
+            "MongoRouterMongoDatabaseFactory does not support client sessions. " +
+            "Transactions and causal consistency are not available with failover routing.");
     }
 
     @Override
