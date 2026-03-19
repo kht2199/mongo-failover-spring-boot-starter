@@ -59,6 +59,14 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionOf("runtimeClasspath")
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
             pom {
                 name = "mongo-failover-spring-boot-starter"
                 description = "Spring Boot Starter for multiple MongoDB connections with sticky failover"
